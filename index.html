@@ -1,40 +1,99 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Monitoreo de Calidad del Aire - UNAD</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<title>Simulación IoT Calidad del Aire</title>
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+<style>
+body {
+    font-family: Arial;
+    background: #0f172a;
+    color: white;
+    text-align: center;
+}
+
+header {
+    background: #1e293b;
+    padding: 20px;
+}
+
+.dashboard {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 30px;
+}
+
+.card {
+    background: #1e40af;
+    padding: 20px;
+    border-radius: 15px;
+    width: 200px;
+}
+
+.card p {
+    font-size: 2em;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.btn-start { background: green; color: white; }
+.btn-stop { background: red; color: white; }
+.btn-random { background: orange; color: black; }
+
+.alerta {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.integrantes {
+    margin-top: 30px;
+    background: #1e293b;
+    padding: 20px;
+}
+</style>
+
 </head>
 
 <body>
 
 <header>
-    <h1>🌎 Sistema IoT de Monitoreo de Calidad del Aire</h1>
-    <p>Proyecto de Ingeniería I - UNAD</p>
+    <h1>🌎 Simulación IoT - Calidad del Aire</h1>
+    <p>Proyecto UNAD - Ingeniería de Sistemas</p>
 </header>
+
+<!-- BOTONES -->
+<section>
+    <button class="btn-start" onclick="iniciarSimulacion()">▶ Iniciar</button>
+    <button class="btn-stop" onclick="detenerSimulacion()">⏹ Detener</button>
+    <button class="btn-random" onclick="generarDato()">🔄 Generar dato</button>
+</section>
 
 <!-- DASHBOARD -->
 <section class="dashboard">
 
     <div class="card">
         <h2>PM2.5</h2>
-        <p id="pm25">--</p>
+        <p id="pm25">0</p>
         <span>µg/m³</span>
     </div>
 
     <div class="card">
         <h2>Temperatura</h2>
-        <p id="temp">--</p>
+        <p id="temp">0</p>
         <span>°C</span>
     </div>
 
     <div class="card">
         <h2>Humedad</h2>
-        <p id="hum">--</p>
+        <p id="hum">0</p>
         <span>%</span>
     </div>
 
@@ -43,37 +102,91 @@
 <!-- ESTADO -->
 <section class="alerta">
     <h2>Estado del Aire</h2>
-    <p id="estado">Cargando...</p>
+    <p id="estado">Esperando datos...</p>
 </section>
 
-<!-- DESCRIPCIÓN -->
-<section class="info">
-    <h2>📌 Descripción del Sistema</h2>
-    <p>
-        Este sistema permite monitorear en tiempo real la calidad del aire (PM2.5),
-        temperatura y humedad en zonas vulnerables de Bogotá mediante tecnología IoT.
-        Los datos son capturados por sensores, enviados a Firebase y visualizados en esta plataforma web.
-    </p>
+<!-- HISTORIAL -->
+<section>
+    <h2>📊 Historial</h2>
+    <ul id="historial"></ul>
 </section>
 
 <!-- INTEGRANTES -->
 <section class="integrantes">
-    <h2>👨‍💻 Integrantes del Proyecto</h2>
-    <ul>
-        <li>Tomás Palacio Santiago</li>
-        <li>Silvia Paola Bello Macías</li>
-        <li>Paola Andrea Vargas Pérez</li>
-    </ul>
+    <h2>👨‍💻 Integrantes</h2>
+    <p>Tomás Palacio Santiago</p>
+    <p>Silvia Paola Bello Macías</p>
+    <p>Paola Andrea Vargas Pérez</p>
 </section>
 
-<!-- FOOTER -->
-<footer>
-    <p>Escuela de Ciencias Básicas Tecnología e Ingeniería</p>
-    <p>Universidad Nacional Abierta y a Distancia - UNAD</p>
-    <p>2026</p>
-</footer>
+<script>
 
-<script src="app.js"></script>
+// Variables
+let intervalo = null;
+
+// Generar datos simulados
+function generarDato() {
+
+    let pm25 = (Math.random() * 100).toFixed(2);
+    let temp = (Math.random() * 30 + 10).toFixed(1);
+    let hum = (Math.random() * 80 + 20).toFixed(1);
+
+    document.getElementById("pm25").innerText = pm25;
+    document.getElementById("temp").innerText = temp;
+    document.getElementById("hum").innerText = hum;
+
+    evaluarCalidad(pm25);
+    guardarHistorial(pm25, temp, hum);
+}
+
+// Evaluar calidad del aire
+function evaluarCalidad(pm25) {
+
+    let estado = document.getElementById("estado");
+
+    if (pm25 <= 12) {
+        estado.innerText = "🟢 Aire Bueno";
+        estado.style.color = "lightgreen";
+    }
+    else if (pm25 <= 35) {
+        estado.innerText = "🟡 Aire Moderado";
+        estado.style.color = "yellow";
+    }
+    else if (pm25 <= 50) {
+        estado.innerText = "🟠 Dañino para sensibles";
+        estado.style.color = "orange";
+    }
+    else {
+        estado.innerText = "🔴 Aire Peligroso";
+        estado.style.color = "red";
+    }
+}
+
+// Iniciar simulación automática
+function iniciarSimulacion() {
+    if (!intervalo) {
+        intervalo = setInterval(generarDato, 2000);
+    }
+}
+
+// Detener simulación
+function detenerSimulacion() {
+    clearInterval(intervalo);
+    intervalo = null;
+}
+
+// Guardar historial
+function guardarHistorial(pm25, temp, hum) {
+
+    let lista = document.getElementById("historial");
+    let item = document.createElement("li");
+
+    item.textContent = `PM2.5: ${pm25} | Temp: ${temp}°C | Hum: ${hum}%`;
+
+    lista.prepend(item);
+}
+
+</script>
 
 </body>
 </html>
