@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Monitoreo de Calidad del Aire</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+</head>
+
+<body>
+
+<header>
+    <h1>🌎 Sistema IoT - Calidad del Aire</h1>
+    <p>Monitoreo en tiempo real PM2.5 - Bogotá</p>
+</header>
+
+<section class="dashboard">
+
+    <div class="card">
+        <h2>PM2.5</h2>
+        <p id="pm25">--</p>
+        <span>µg/m³</span>
+    </div>
+
+    <div class="card">
+        <h2>Temperatura</h2>
+        <p id="temp">--</p>
+        <span>°C</span>
+    </div>
+
+    <div class="card">
+        <h2>Humedad</h2>
+        <p id="hum">--</p>
+        <span>%</span>
+    </div>
+
+</section>
+
+<section class="alerta">
+    <h2>Estado del Aire</h2>
+    <p id="estado">Cargando...</p>
+</section>
+
+<footer>
+    <p>Proyecto UNAD - Ingeniería de Sistemas</p>
+</footer>
+
+<script src="app.js"></script>
+
+</body>
+</html>
